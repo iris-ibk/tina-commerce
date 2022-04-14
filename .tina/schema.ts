@@ -42,6 +42,50 @@ export default defineSchema({
         },
       ],
     },
+    {
+      label: "Products",
+      name: "products",
+      path: "content/products",
+      fields: [
+        {
+          type: "string",
+          label: "Title",
+          name: "title",
+        },
+        {
+          type: "string",
+          label: "Stripe Unique ID",
+          name: "unique_id",
+        },
+        {
+          type: "rich-text",
+          label: "Description",
+          name: "description",
+          isBody: false,
+          templates: [
+            {
+              name: "PageSection",
+              label: "Page Section",
+              fields: [
+                {
+                  type: "string",
+                  name: "heading",
+                  label: "Heading",
+                },
+                {
+                  type: "string",
+                  name: "content",
+                  label: "Content",
+                  ui: {
+                    component: "textarea"
+                  }
+                }
+              ],
+            },
+          ]
+        },
+      ],
+    }
   ],
 });
 

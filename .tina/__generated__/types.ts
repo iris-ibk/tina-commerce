@@ -70,6 +70,8 @@ export type Query = {
   getDocumentFields: Scalars['JSON'];
   getPostsDocument: PostsDocument;
   getPostsList: PostsConnection;
+  getProductsDocument: ProductsDocument;
+  getProductsList: ProductsConnection;
 };
 
 
@@ -116,6 +118,20 @@ export type QueryGetPostsListArgs = {
   sort?: InputMaybe<Scalars['String']>;
 };
 
+
+export type QueryGetProductsDocumentArgs = {
+  relativePath?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryGetProductsListArgs = {
+  before?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Float']>;
+  last?: InputMaybe<Scalars['Float']>;
+  sort?: InputMaybe<Scalars['String']>;
+};
+
 export type DocumentConnectionEdges = {
   __typename?: 'DocumentConnectionEdges';
   cursor?: Maybe<Scalars['String']>;
@@ -151,7 +167,7 @@ export type CollectionDocumentsArgs = {
   sort?: InputMaybe<Scalars['String']>;
 };
 
-export type DocumentNode = PostsDocument;
+export type DocumentNode = PostsDocument | ProductsDocument;
 
 export type Posts = {
   __typename?: 'Posts';
@@ -182,6 +198,36 @@ export type PostsConnection = Connection & {
   edges?: Maybe<Array<Maybe<PostsConnectionEdges>>>;
 };
 
+export type Products = {
+  __typename?: 'Products';
+  title?: Maybe<Scalars['String']>;
+  unique_id?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['JSON']>;
+};
+
+export type ProductsDocument = Node & Document & {
+  __typename?: 'ProductsDocument';
+  id: Scalars['ID'];
+  sys: SystemInfo;
+  data: Products;
+  form: Scalars['JSON'];
+  values: Scalars['JSON'];
+  dataJSON: Scalars['JSON'];
+};
+
+export type ProductsConnectionEdges = {
+  __typename?: 'ProductsConnectionEdges';
+  cursor?: Maybe<Scalars['String']>;
+  node?: Maybe<ProductsDocument>;
+};
+
+export type ProductsConnection = Connection & {
+  __typename?: 'ProductsConnection';
+  pageInfo?: Maybe<PageInfo>;
+  totalCount: Scalars['Float'];
+  edges?: Maybe<Array<Maybe<ProductsConnectionEdges>>>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   addPendingDocument: DocumentNode;
@@ -189,6 +235,8 @@ export type Mutation = {
   createDocument: DocumentNode;
   updatePostsDocument: PostsDocument;
   createPostsDocument: PostsDocument;
+  updateProductsDocument: ProductsDocument;
+  createProductsDocument: ProductsDocument;
 };
 
 
@@ -224,8 +272,21 @@ export type MutationCreatePostsDocumentArgs = {
   params: PostsMutation;
 };
 
+
+export type MutationUpdateProductsDocumentArgs = {
+  relativePath: Scalars['String'];
+  params: ProductsMutation;
+};
+
+
+export type MutationCreateProductsDocumentArgs = {
+  relativePath: Scalars['String'];
+  params: ProductsMutation;
+};
+
 export type DocumentMutation = {
   posts?: InputMaybe<PostsMutation>;
+  products?: InputMaybe<ProductsMutation>;
 };
 
 export type PostsMutation = {
@@ -233,7 +294,15 @@ export type PostsMutation = {
   body?: InputMaybe<Scalars['JSON']>;
 };
 
+export type ProductsMutation = {
+  title?: InputMaybe<Scalars['String']>;
+  unique_id?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['JSON']>;
+};
+
 export type PostsPartsFragment = { __typename?: 'Posts', title?: string | null, body?: any | null };
+
+export type ProductsPartsFragment = { __typename?: 'Products', title?: string | null, unique_id?: string | null, description?: any | null };
 
 export type GetPostsDocumentQueryVariables = Exact<{
   relativePath: Scalars['String'];
@@ -247,10 +316,29 @@ export type GetPostsListQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetPostsListQuery = { __typename?: 'Query', getPostsList: { __typename?: 'PostsConnection', totalCount: number, edges?: Array<{ __typename?: 'PostsConnectionEdges', node?: { __typename?: 'PostsDocument', id: string, sys: { __typename?: 'SystemInfo', filename: string, basename: string, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, data: { __typename?: 'Posts', title?: string | null, body?: any | null } } | null } | null> | null } };
 
+export type GetProductsDocumentQueryVariables = Exact<{
+  relativePath: Scalars['String'];
+}>;
+
+
+export type GetProductsDocumentQuery = { __typename?: 'Query', getProductsDocument: { __typename?: 'ProductsDocument', id: string, sys: { __typename?: 'SystemInfo', filename: string, basename: string, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, data: { __typename?: 'Products', title?: string | null, unique_id?: string | null, description?: any | null } } };
+
+export type GetProductsListQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetProductsListQuery = { __typename?: 'Query', getProductsList: { __typename?: 'ProductsConnection', totalCount: number, edges?: Array<{ __typename?: 'ProductsConnectionEdges', node?: { __typename?: 'ProductsDocument', id: string, sys: { __typename?: 'SystemInfo', filename: string, basename: string, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, data: { __typename?: 'Products', title?: string | null, unique_id?: string | null, description?: any | null } } | null } | null> | null } };
+
 export const PostsPartsFragmentDoc = gql`
     fragment PostsParts on Posts {
   title
   body
+}
+    `;
+export const ProductsPartsFragmentDoc = gql`
+    fragment ProductsParts on Products {
+  title
+  unique_id
+  description
 }
     `;
 export const GetPostsDocumentDocument = gql`
@@ -294,6 +382,47 @@ export const GetPostsListDocument = gql`
   }
 }
     ${PostsPartsFragmentDoc}`;
+export const GetProductsDocumentDocument = gql`
+    query getProductsDocument($relativePath: String!) {
+  getProductsDocument(relativePath: $relativePath) {
+    sys {
+      filename
+      basename
+      breadcrumbs
+      path
+      relativePath
+      extension
+    }
+    id
+    data {
+      ...ProductsParts
+    }
+  }
+}
+    ${ProductsPartsFragmentDoc}`;
+export const GetProductsListDocument = gql`
+    query getProductsList {
+  getProductsList {
+    totalCount
+    edges {
+      node {
+        id
+        sys {
+          filename
+          basename
+          breadcrumbs
+          path
+          relativePath
+          extension
+        }
+        data {
+          ...ProductsParts
+        }
+      }
+    }
+  }
+}
+    ${ProductsPartsFragmentDoc}`;
 export type Requester<C= {}> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R>
   export function getSdk<C>(requester: Requester<C>) {
     return {
@@ -302,6 +431,12 @@ export type Requester<C= {}> = <R, V>(doc: DocumentNode, vars?: V, options?: C) 
       },
     getPostsList(variables?: GetPostsListQueryVariables, options?: C): Promise<{data: GetPostsListQuery, variables: GetPostsListQueryVariables, query: string}> {
         return requester<{data: GetPostsListQuery, variables: GetPostsListQueryVariables, query: string}, GetPostsListQueryVariables>(GetPostsListDocument, variables, options);
+      },
+    getProductsDocument(variables: GetProductsDocumentQueryVariables, options?: C): Promise<{data: GetProductsDocumentQuery, variables: GetProductsDocumentQueryVariables, query: string}> {
+        return requester<{data: GetProductsDocumentQuery, variables: GetProductsDocumentQueryVariables, query: string}, GetProductsDocumentQueryVariables>(GetProductsDocumentDocument, variables, options);
+      },
+    getProductsList(variables?: GetProductsListQueryVariables, options?: C): Promise<{data: GetProductsListQuery, variables: GetProductsListQueryVariables, query: string}> {
+        return requester<{data: GetProductsListQuery, variables: GetProductsListQueryVariables, query: string}, GetProductsListQueryVariables>(GetProductsListDocument, variables, options);
       }
     };
   }

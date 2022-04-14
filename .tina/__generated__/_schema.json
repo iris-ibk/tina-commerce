@@ -73,6 +73,82 @@
       "namespace": [
         "posts"
       ]
+    },
+    {
+      "label": "Products",
+      "name": "products",
+      "path": "content/products",
+      "fields": [
+        {
+          "type": "string",
+          "label": "Title",
+          "name": "title",
+          "namespace": [
+            "products",
+            "title"
+          ]
+        },
+        {
+          "type": "string",
+          "label": "Stripe Unique ID",
+          "name": "unique_id",
+          "namespace": [
+            "products",
+            "unique_id"
+          ]
+        },
+        {
+          "type": "rich-text",
+          "label": "Description",
+          "name": "description",
+          "isBody": false,
+          "templates": [
+            {
+              "name": "PageSection",
+              "label": "Page Section",
+              "fields": [
+                {
+                  "type": "string",
+                  "name": "heading",
+                  "label": "Heading",
+                  "namespace": [
+                    "products",
+                    "description",
+                    "PageSection",
+                    "heading"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "name": "content",
+                  "label": "Content",
+                  "ui": {
+                    "component": "textarea"
+                  },
+                  "namespace": [
+                    "products",
+                    "description",
+                    "PageSection",
+                    "content"
+                  ]
+                }
+              ],
+              "namespace": [
+                "products",
+                "description",
+                "PageSection"
+              ]
+            }
+          ],
+          "namespace": [
+            "products",
+            "description"
+          ]
+        }
+      ],
+      "namespace": [
+        "products"
+      ]
     }
   ]
 }

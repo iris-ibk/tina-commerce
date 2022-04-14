@@ -6,8 +6,58 @@ import Image from 'next/image';
 import Head from 'next/head';
 import { formatCurrency } from '@/lib/utils';
 import { MinusSmIcon, PlusSmIcon } from '@heroicons/react/outline';
+import { staticRequest, gql } from "tinacms";
+import { createGlobalStyle } from "styled-components";
+import { useTina } from "tinacms/dist/edit-state";
+import { TinaMarkdown } from 'tinacms/dist/rich-text'
+
+const query = gql`
+  query ProductsQuery($relativePath: String!) {
+    getProductsDocument(relativePath: $relativePath) {
+      data {
+        unique_id
+        description
+      }
+    }
+  }`
+
+// Styles for markdown
+const GlobalStyle = createGlobalStyle`
+    h1,h2,h3,h4,h5 {
+      margin-bottom: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    blockquote {
+      background-color: rgb(209,250,229);
+    }
+    h1 {
+      font-size: 45px;
+    }
+    h2 {
+      font-size: 35px;
+    }
+    h3 {
+      font-size: 25px;
+    }
+    h4 {
+      font-size: 22px;
+    }
+    ul {
+      padding-left: 0;
+    }
+    li {
+      list-style-type: none;
+    }
+    a {
+      font-weight: bold;
+      color: rgb(59,130,246);
+      text-decoration: underline;
+    }
+    `;
 
 import products from 'products';
+
+
 
 const Product = props => {
   const router = useRouter();
@@ -17,6 +67,13 @@ const Product = props => {
 
   const toastId = useRef();
   const firstRun = useRef(true);
+
+  const { data } = useTina({
+    query,
+    variables: props.variables,
+    data: props.data,
+  });
+  console.log(data);
 
   const handleOnAddToCart = () => {
     setAdding(true);
@@ -55,12 +112,14 @@ const Product = props => {
         <div className="flex flex-col md:flex-row justify-between items-center space-y-8 md:space-y-0 md:space-x-12">
           {/* Product's image */}
           <div className="relative w-72 h-72 sm:w-96 sm:h-96">
-            <Image
-              src={props.image}
-              alt={props.name}
-              layout="fill"
-              objectFit="contain"
-            />
+            {props.image &&
+              <Image
+                src={props.image}
+                alt={props.name}
+                layout="fill"
+                objectFit="contain"
+              />
+            }
           </div>
 
           {/* Product's details */}
@@ -120,7 +179,7 @@ export async function getStaticPaths() {
   return {
     // Existing posts are rendered to HTML at build time
     paths: Object.keys(products)?.map(id => ({
-      params: { id },
+      params: { unique_id: id },
     })),
     // Enable statically generating additional pages
     fallback: true,
@@ -128,11 +187,22 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
+  let data = {}
+  const variables = { relativePath: `${params.unique_id}.md` }
+
   try {
-    const props = products?.find(product => product.id === params.id) ?? {};
+    const productApi = products?.find(product => product.id === params.unique_id) ?? {};
+    data = await staticRequest({
+      query,
+      variables
+    })
 
     return {
-      props,
+      props: {
+        data,
+        productApi,
+        variables,
+      },
       // Next.js will attempt to re-generate the page:
       // - When a request comes in
       // - At most once every second

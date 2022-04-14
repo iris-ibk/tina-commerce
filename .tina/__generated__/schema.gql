@@ -51,6 +51,8 @@ type Query {
   getDocumentFields: JSON!
   getPostsDocument(relativePath: String): PostsDocument!
   getPostsList(before: String, after: String, first: Float, last: Float, sort: String): PostsConnection!
+  getProductsDocument(relativePath: String): ProductsDocument!
+  getProductsList(before: String, after: String, first: Float, last: Float, sort: String): ProductsConnection!
 }
 
 type DocumentConnectionEdges {
@@ -76,7 +78,7 @@ type Collection {
   documents(before: String, after: String, first: Float, last: Float, sort: String): DocumentConnection!
 }
 
-union DocumentNode = PostsDocument
+union DocumentNode = PostsDocument | ProductsDocument
 
 type Posts {
   title: String
@@ -103,21 +105,56 @@ type PostsConnection implements Connection {
   edges: [PostsConnectionEdges]
 }
 
+type Products {
+  title: String
+  unique_id: String
+  description: JSON
+}
+
+type ProductsDocument implements Node & Document {
+  id: ID!
+  sys: SystemInfo!
+  data: Products!
+  form: JSON!
+  values: JSON!
+  dataJSON: JSON!
+}
+
+type ProductsConnectionEdges {
+  cursor: String
+  node: ProductsDocument
+}
+
+type ProductsConnection implements Connection {
+  pageInfo: PageInfo
+  totalCount: Float!
+  edges: [ProductsConnectionEdges]
+}
+
 type Mutation {
   addPendingDocument(collection: String!, relativePath: String!, template: String): DocumentNode!
   updateDocument(collection: String, relativePath: String!, params: DocumentMutation!): DocumentNode!
   createDocument(collection: String, relativePath: String!, params: DocumentMutation!): DocumentNode!
   updatePostsDocument(relativePath: String!, params: PostsMutation!): PostsDocument!
   createPostsDocument(relativePath: String!, params: PostsMutation!): PostsDocument!
+  updateProductsDocument(relativePath: String!, params: ProductsMutation!): ProductsDocument!
+  createProductsDocument(relativePath: String!, params: ProductsMutation!): ProductsDocument!
 }
 
 input DocumentMutation {
   posts: PostsMutation
+  products: ProductsMutation
 }
 
 input PostsMutation {
   title: String
   body: JSON
+}
+
+input ProductsMutation {
+  title: String
+  unique_id: String
+  description: JSON
 }
 
 schema {

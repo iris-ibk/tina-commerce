@@ -36,3 +36,42 @@ query getPostsList {
     }
   }
 }
+
+query getProductsDocument($relativePath: String!) {
+  getProductsDocument(relativePath: $relativePath) {
+    sys {
+      filename
+      basename
+      breadcrumbs
+      path
+      relativePath
+      extension
+    }
+    id
+    data {
+      ...ProductsParts
+    }
+  }
+}
+
+query getProductsList {
+  getProductsList {
+    totalCount
+    edges {
+      node {
+        id
+        sys {
+          filename
+          basename
+          breadcrumbs
+          path
+          relativePath
+          extension
+        }
+        data {
+          ...ProductsParts
+        }
+      }
+    }
+  }
+}

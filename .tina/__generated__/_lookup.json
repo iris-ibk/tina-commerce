@@ -3,7 +3,8 @@
     "type": "DocumentConnection",
     "resolveType": "multiCollectionDocumentList",
     "collections": [
-      "posts"
+      "posts",
+      "products"
     ]
   },
   "Node": {
@@ -27,5 +28,17 @@
     "type": "PostsConnection",
     "resolveType": "collectionDocumentList",
     "collection": "posts"
+  },
+  "ProductsDocument": {
+    "type": "ProductsDocument",
+    "resolveType": "collectionDocument",
+    "collection": "products",
+    "createProductsDocument": "create",
+    "updateProductsDocument": "update"
+  },
+  "ProductsConnection": {
+    "type": "ProductsConnection",
+    "resolveType": "collectionDocumentList",
+    "collection": "products"
   }
 }

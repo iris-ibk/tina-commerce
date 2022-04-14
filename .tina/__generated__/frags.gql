@@ -2,3 +2,9 @@ fragment PostsParts on Posts {
   title
   body
 }
+
+fragment ProductsParts on Products {
+  title
+  unique_id
+  description
+}
