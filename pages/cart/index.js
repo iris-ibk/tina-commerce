@@ -17,6 +17,7 @@ const Cart = () => {
   const { cartDetails, totalPrice, cartCount, addItem, removeItem, clearCart } =
     useShoppingCart();
   const [redirecting, setRedirecting] = useState(false);
+  console.log(useShoppingCart())
 
   const redirectToCheckout = async () => {
     // Create Stripe checkout
@@ -78,12 +79,14 @@ const Cart = () => {
                 <Link href={`/products/${product.id}`}>
                   <a className="flex items-center space-x-4 group">
                     <div className="relative w-20 h-20 group-hover:scale-110 transition-transform">
-                      <Image
-                        src={product.image}
-                        alt={product.name}
-                        layout="fill"
-                        objectFit="contain"
-                      />
+                      {product.image &&
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          layout="fill"
+                          objectFit="contain"
+                        />
+                      }
                     </div>
                     <p className="font-semibold text-xl group-hover:underline">
                       {product.name}
